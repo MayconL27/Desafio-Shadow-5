@@ -5,6 +5,8 @@ import com.shadow.desafio.repositories.UsuariosRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UsuariosService {
 
@@ -18,4 +20,9 @@ public class UsuariosService {
     public Usuarios save(Usuarios usuarios) {
         return usuariosRepository.save(usuarios);
     }
+    public List<Usuarios> findAll() {
+        return usuariosRepository.findAll();
+    }
+
+
 }
