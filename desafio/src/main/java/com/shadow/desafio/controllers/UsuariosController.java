@@ -24,9 +24,8 @@ public class UsuariosController {
 
 
     @PostMapping
-    @RequestMapping("/salvar")
     public ResponseEntity<Object> salvarUsuarios(@RequestBody @Valid UsuariosDto usuariosDto){
-        var usuarios = new Usuarios();/*Obs: Não tem no java 8*/
+        Usuarios usuarios = new Usuarios();/*Obs: Não tem no java 8*/
         BeanUtils.copyProperties(usuariosDto, usuarios); /*Conversão de DTO para Entity ates de salvar*/
         return ResponseEntity.status(HttpStatus.CREATED).body(usuariosService.save(usuarios));
     }

@@ -11,9 +11,8 @@ import java.util.UUID;
 public class UsuariosDto {
 
     /* Dependency spring-boot-starter-validation */
-    @NotBlank /* Verifica se o campo não é nulo*/
-    private UUID codigoID;
-    @NotBlank
+
+    @NotBlank/* Verifica se o campo não é nulo*/
     private String nome;
     @NotBlank
     @Size(max = 11)
