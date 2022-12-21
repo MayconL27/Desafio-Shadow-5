@@ -1,17 +1,17 @@
 package com.shadow.desafio.dtos;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.UUID;
-
+@Getter
+@Setter
 public class UsuariosDto {
 
     /* Dependency spring-boot-starter-validation */
-    @NotBlank
+    @NotBlank /* Verifica se o campo não é nulo*/
     private UUID codigoID;
     @NotBlank
     private String nome;
@@ -24,4 +24,5 @@ public class UsuariosDto {
     private String senha;
     @NotBlank
     private String tipoUsuario;
+
 }

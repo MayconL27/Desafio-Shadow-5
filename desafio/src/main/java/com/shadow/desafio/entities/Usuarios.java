@@ -7,7 +7,7 @@ import lombok.Setter;
 import java.io.Serializable;
 import java.util.UUID;
 @Entity
-@Table(name = "Usuarios")
+@Table(name = "usuarios")
 @Getter
 @Setter
 public class Usuarios implements Serializable {
@@ -19,11 +19,11 @@ public class Usuarios implements Serializable {
     private String nome;
     @Column(nullable = false, unique = true, length = 11)
     private String cpf;
-    @Column(nullable = false)
+    @Column(nullable = false, length = 30)
     private String email;
-    @Column(nullable = false)
+    @Column(nullable = false, length = 30)
     private String senha;
-    @Column(nullable = false)
+    @Column(nullable = false, length = 30)
     private String tipoUsuario;
 
 }
