@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,17 +19,20 @@ public class UsuariosController {
 
     final UsuariosService usuariosService;
     private final UsuariosRepository usuariosRepository;
+    private final PasswordEncoder encoder;
 
     public UsuariosController(UsuariosService usuariosService,
-                              UsuariosRepository usuariosRepository) {
+                              UsuariosRepository usuariosRepository, PasswordEncoder encoder) {
         this.usuariosService = usuariosService;
         this.usuariosRepository = usuariosRepository;
+        this.encoder = encoder;
     }
 
     @PostMapping(value = "salvar")
     public ResponseEntity<Object> salvarUsuarios(@RequestBody @Valid UsuariosDto usuariosDto){
         var usuarios = new Usuarios();/*Obs: Não tem no java 8*/
         BeanUtils.copyProperties(usuariosDto, usuarios); /*Conversão de DTO para Entity ates de salvar*/
+        usuarios.setSenha(encoder.encode(usuarios.getSenha())); /* BCrypt Senha encripitada */
         return ResponseEntity.status(HttpStatus.CREATED).body(usuariosService.save(usuarios));
     }
 /*
@@ -42,26 +46,28 @@ public class UsuariosController {
         List<Usuarios> usuarios = usuariosRepository.findAll();
         return new ResponseEntity<List<Usuarios>>(usuarios, HttpStatus.OK);
     }
-
-    @PutMapping
-    @ResponseBody
-    public ResponseEntity<?> atualizar(@RequestBody Usuarios usuario) {
 /*
+    @PutMapping(value = "atualizar")
+    public ResponseEntity<?> atualizar(@RequestBody Usuarios usuario) {
+
         if (usuario.getId() == null) {
             return new ResponseEntity<String>("Id não foi informado para atualização.", HttpStatus.OK);
-        }*/
+        }
 
         Usuarios user = usuariosRepository.saveAndFlush(usuario);
 
         return new ResponseEntity<Usuarios>(user, HttpStatus.OK);
 
-    }
+    }*/
+
     @DeleteMapping(value = "delete")
     public ResponseEntity<String> deleteUsuario(@RequestBody Usuarios usuarios) {
         usuariosRepository.delete(usuarios);
         return new ResponseEntity<String>("Usuário deletado com sucesso", HttpStatus.OK);
     }
-
-
+    @PutMapping(value = "atualizar")
+    public Usuarios atualizarUsuario(@RequestBody Usuarios usuarios) {
+        return usuariosRepository.save(usuarios);
+    }
 
 }
