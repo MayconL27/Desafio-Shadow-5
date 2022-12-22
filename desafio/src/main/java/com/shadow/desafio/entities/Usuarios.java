@@ -21,7 +21,7 @@ public class Usuarios implements Serializable {
     private String cpf;
     @Column(nullable = false, length = 30)
     private String email;
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false)
     private String senha;
     @Column(nullable = false, length = 30)
     private String tipoUsuario;

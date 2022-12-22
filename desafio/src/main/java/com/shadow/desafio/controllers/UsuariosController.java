@@ -21,8 +21,7 @@ public class UsuariosController {
     private final UsuariosRepository usuariosRepository;
     private final PasswordEncoder encoder;
 
-    public UsuariosController(UsuariosService usuariosService,
-                              UsuariosRepository usuariosRepository, PasswordEncoder encoder) {
+    public UsuariosController(UsuariosService usuariosService, UsuariosRepository usuariosRepository, PasswordEncoder encoder) {
         this.usuariosService = usuariosService;
         this.usuariosRepository = usuariosRepository;
         this.encoder = encoder;
@@ -35,30 +34,11 @@ public class UsuariosController {
         usuarios.setSenha(encoder.encode(usuarios.getSenha())); /* BCrypt Senha encripitada */
         return ResponseEntity.status(HttpStatus.CREATED).body(usuariosService.save(usuarios));
     }
-/*
-    @GetMapping
-    public ResponseEntity<List<Usuarios>> listarTodosUsuarios(){
-        return ResponseEntity.status(HttpStatus.OK).body(UsuariosService.findAll());
-    }*/
-
     @GetMapping(value = "listartodos")
     public ResponseEntity<List<Usuarios>> listarTodosUsuarios(){
         List<Usuarios> usuarios = usuariosRepository.findAll();
         return new ResponseEntity<List<Usuarios>>(usuarios, HttpStatus.OK);
     }
-/*
-    @PutMapping(value = "atualizar")
-    public ResponseEntity<?> atualizar(@RequestBody Usuarios usuario) {
-
-        if (usuario.getId() == null) {
-            return new ResponseEntity<String>("Id não foi informado para atualização.", HttpStatus.OK);
-        }
-
-        Usuarios user = usuariosRepository.saveAndFlush(usuario);
-
-        return new ResponseEntity<Usuarios>(user, HttpStatus.OK);
-
-    }*/
 
     @DeleteMapping(value = "delete")
     public ResponseEntity<String> deleteUsuario(@RequestBody Usuarios usuarios) {
