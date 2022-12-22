@@ -42,26 +42,28 @@ public class UsuariosController {
         List<Usuarios> usuarios = usuariosRepository.findAll();
         return new ResponseEntity<List<Usuarios>>(usuarios, HttpStatus.OK);
     }
-
-    @PutMapping
-    @ResponseBody
-    public ResponseEntity<?> atualizar(@RequestBody Usuarios usuario) {
 /*
+    @PutMapping(value = "atualizar")
+    public ResponseEntity<?> atualizar(@RequestBody Usuarios usuario) {
+
         if (usuario.getId() == null) {
             return new ResponseEntity<String>("Id não foi informado para atualização.", HttpStatus.OK);
-        }*/
+        }
 
         Usuarios user = usuariosRepository.saveAndFlush(usuario);
 
         return new ResponseEntity<Usuarios>(user, HttpStatus.OK);
 
-    }
+    }*/
+
     @DeleteMapping(value = "delete")
     public ResponseEntity<String> deleteUsuario(@RequestBody Usuarios usuarios) {
         usuariosRepository.delete(usuarios);
         return new ResponseEntity<String>("Usuário deletado com sucesso", HttpStatus.OK);
     }
-
-
+    @PutMapping(value = "atualizar")
+    public Usuarios atualizarUsuario(@RequestBody Usuarios usuarios) {
+        return usuariosRepository.save(usuarios);
+    }
 
 }
