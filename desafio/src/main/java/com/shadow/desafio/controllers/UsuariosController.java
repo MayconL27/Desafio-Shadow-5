@@ -2,6 +2,7 @@ package com.shadow.desafio.controllers;
 
 import com.shadow.desafio.dtos.UsuariosDto;
 import com.shadow.desafio.entities.Usuarios;
+import com.shadow.desafio.exceptions.Exceptions;
 import com.shadow.desafio.repositories.UsuariosRepository;
 import com.shadow.desafio.services.UsuariosService;
 import jakarta.validation.Valid;
@@ -12,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)/* Permitir acesso a qualquer fonte*/
@@ -34,10 +36,16 @@ public class UsuariosController {
         usuarios.setSenha(encoder.encode(usuarios.getSenha())); /* BCrypt Senha encripitada */
         return ResponseEntity.status(HttpStatus.CREATED).body(usuariosService.save(usuarios));
     }
+
     @GetMapping(value = "listartodos")
-    public ResponseEntity<List<Usuarios>> listarTodosUsuarios(){
+    public ResponseEntity<List<Usuarios>> ProcurarID(){
         List<Usuarios> usuarios = usuariosRepository.findAll();
         return new ResponseEntity<List<Usuarios>>(usuarios, HttpStatus.OK);
+    }
+    @GetMapping(value = "buscarid")
+    public ResponseEntity<Usuarios> buscarID(@RequestParam(name = "codigoid") UUID CodigoID) {
+        Usuarios usuarios = usuariosRepository.findById(CodigoID).get();
+        return new ResponseEntity<Usuarios>(usuarios, HttpStatus.OK);
     }
 
     @DeleteMapping(value = "delete")
@@ -49,5 +57,6 @@ public class UsuariosController {
     public Usuarios atualizarUsuario(@RequestBody Usuarios usuarios) {
         return usuariosRepository.save(usuarios);
     }
+
 
 }
