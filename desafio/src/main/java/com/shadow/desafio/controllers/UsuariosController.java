@@ -2,27 +2,29 @@ package com.shadow.desafio.controllers;
 
 import com.shadow.desafio.entities.Usuarios;
 import com.shadow.desafio.repositories.UsuariosRepository;
+import com.shadow.desafio.util.ValidarCPF;
+import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.UUID;
-
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)/* Permitir acesso a qualquer fonte*/
+@Data
 public class UsuariosController {
 
     private final UsuariosRepository usuariosRepository;
     private final PasswordEncoder encoder;
 
-    public UsuariosController( UsuariosRepository usuariosRepository, PasswordEncoder encoder) {
-        this.usuariosRepository = usuariosRepository;
-        this.encoder = encoder;
-    }
     @PostMapping(value = "salvar")
-    public ResponseEntity<Usuarios> salvarUsuarios2(@RequestBody Usuarios usuarios){
+    public ResponseEntity<?> salvarUsuarios2(@RequestBody Usuarios usuarios){
+
+        if (!ValidarCPF.isCPF(usuarios.getCpf())) { /* Se retornar CPf falso: */
+            //throw new Exception("Cpf: " + usuarios.getCpf() + " está inválido.");
+            return new ResponseEntity<String>("Cpf " + usuarios.getCpf() +" inválido", HttpStatus.OK);
+        }
         Usuarios user = usuariosRepository.save(usuarios);
         usuarios.setSenha(encoder.encode(usuarios.getSenha())); /* BCrypt Senha encripitada */
         return new ResponseEntity<>(user,HttpStatus.CREATED);
