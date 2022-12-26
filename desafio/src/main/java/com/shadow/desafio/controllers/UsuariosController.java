@@ -1,12 +1,7 @@
 package com.shadow.desafio.controllers;
 
-import com.shadow.desafio.dtos.UsuariosDto;
 import com.shadow.desafio.entities.Usuarios;
-import com.shadow.desafio.exceptions.Exceptions;
 import com.shadow.desafio.repositories.UsuariosRepository;
-import com.shadow.desafio.services.UsuariosService;
-import jakarta.validation.Valid;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,24 +14,19 @@ import java.util.UUID;
 @CrossOrigin(origins = "*", maxAge = 3600)/* Permitir acesso a qualquer fonte*/
 public class UsuariosController {
 
-    final UsuariosService usuariosService;
     private final UsuariosRepository usuariosRepository;
     private final PasswordEncoder encoder;
 
-    public UsuariosController(UsuariosService usuariosService, UsuariosRepository usuariosRepository, PasswordEncoder encoder) {
-        this.usuariosService = usuariosService;
+    public UsuariosController( UsuariosRepository usuariosRepository, PasswordEncoder encoder) {
         this.usuariosRepository = usuariosRepository;
         this.encoder = encoder;
     }
-
     @PostMapping(value = "salvar")
-    public ResponseEntity<Object> salvarUsuarios(@RequestBody @Valid UsuariosDto usuariosDto){
-        var usuarios = new Usuarios();/*Obs: Não tem no java 8*/
-        BeanUtils.copyProperties(usuariosDto, usuarios); /*Conversão de DTO para Entity ates de salvar*/
+    public ResponseEntity<Usuarios> salvarUsuarios2(@RequestBody Usuarios usuarios){
+        Usuarios user = usuariosRepository.save(usuarios);
         usuarios.setSenha(encoder.encode(usuarios.getSenha())); /* BCrypt Senha encripitada */
-        return ResponseEntity.status(HttpStatus.CREATED).body(usuariosService.save(usuarios));
+        return new ResponseEntity<>(user,HttpStatus.CREATED);
     }
-
     @GetMapping(value = "listartodos")
     public ResponseEntity<List<Usuarios>> ProcurarID(){
         List<Usuarios> usuarios = usuariosRepository.findAll();
@@ -54,9 +44,11 @@ public class UsuariosController {
         return new ResponseEntity<String>("Usuário deletado com sucesso", HttpStatus.OK);
     }
     @PutMapping(value = "atualizar")
-    public Usuarios atualizarUsuario(@RequestBody Usuarios usuarios) {
-        return usuariosRepository.save(usuarios);
+    public ResponseEntity<?> atualizar(@RequestBody Usuarios usuarios) { /* <?> Pode restotar qualquer coisa */
+        if (usuarios.getCodigoID() == null) {
+            return new ResponseEntity<String>("Id não foi informado", HttpStatus.OK);
+        }
+        Usuarios user = usuariosRepository.saveAndFlush(usuarios);
+        return new ResponseEntity<Usuarios>(user, HttpStatus.OK);
     }
-
-
 }

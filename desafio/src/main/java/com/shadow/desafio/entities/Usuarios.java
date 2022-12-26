@@ -1,6 +1,7 @@
 package com.shadow.desafio.entities;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,8 +9,7 @@ import java.io.Serializable;
 import java.util.UUID;
 @Entity
 @Table(name = "usuarios")
-@Getter
-@Setter
+@Data
 public class Usuarios implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
