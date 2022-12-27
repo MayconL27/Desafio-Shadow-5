@@ -2,25 +2,35 @@ package com.shadow.desafio.controllers;
 
 import com.shadow.desafio.entities.Usuarios;
 import com.shadow.desafio.repositories.UsuariosRepository;
+import com.shadow.desafio.resources.exceptions.StandarError;
+import com.shadow.desafio.service.UsuariosService;
+import com.shadow.desafio.service.exceptions.EntityNotFoundException;
 import com.shadow.desafio.util.ValidarCPF;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
+
+
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)/* Permitir acesso a qualquer fonte*/
 @Data
 public class UsuariosController {
 
-    private final UsuariosRepository usuariosRepository;
+    @Autowired
+    private UsuariosService usuariosService;
+    @Autowired
+    private UsuariosRepository usuariosRepository;
     private final PasswordEncoder encoder;
 
     @PostMapping(value = "salvar")
-    public ResponseEntity<?> salvarUsuarios2(@RequestBody Usuarios usuarios){
-
+    public ResponseEntity<?> salvarUsuarios(@RequestBody Usuarios usuarios){
         if (!ValidarCPF.isCPF(usuarios.getCpf())) { /* Se retornar CPf falso: */
             //throw new Exception("Cpf: " + usuarios.getCpf() + " está inválido.");
             return new ResponseEntity<String>("Cpf " + usuarios.getCpf() +" inválido", HttpStatus.OK);
@@ -34,10 +44,26 @@ public class UsuariosController {
         List<Usuarios> usuarios = usuariosRepository.findAll();
         return new ResponseEntity<List<Usuarios>>(usuarios, HttpStatus.OK);
     }
-    @GetMapping(value = "buscarid")
-    public ResponseEntity<Usuarios> buscarID(@RequestParam(name = "codigoid") UUID CodigoID) {
-        Usuarios usuarios = usuariosRepository.findById(CodigoID).get();
+    @GetMapping(value = "buscarid") /* Com RequestParam */
+    public ResponseEntity<Usuarios> buscarID(@RequestParam(name = "codigoid") UUID codigoID) {
+        Usuarios usuarios = usuariosRepository.findById(codigoID).get();
         return new ResponseEntity<Usuarios>(usuarios, HttpStatus.OK);
+    }
+    @GetMapping(value = "/{codigoID}") /* Passando a Variavel */
+    public ResponseEntity<?> buscarID2(@PathVariable UUID codigoID) {
+        try {
+            Usuarios usuarios = usuariosService.findById(codigoID);
+            return new ResponseEntity<Usuarios>(usuarios, HttpStatus.OK);
+        }
+        catch (EntityNotFoundException e) {
+            StandarError err = new StandarError();
+            err.setTimestamp(Instant.now());
+            err.setStatus(HttpStatus.NOT_FOUND.value());
+            err.setError("Id não encontrado");
+            err.setMessage(e.getMessage());
+            err.setPath("Test");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
+        }
     }
 
     @DeleteMapping(value = "delete")
