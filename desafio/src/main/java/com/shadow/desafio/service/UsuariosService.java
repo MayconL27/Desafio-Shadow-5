@@ -24,7 +24,7 @@ public class UsuariosService {
     }
 
     public void delete(Usuarios usuarios) {
-
+        usuariosRepository.delete(usuarios);
     }
 
     @Transactional /* Caso der errado, garante o rollback */

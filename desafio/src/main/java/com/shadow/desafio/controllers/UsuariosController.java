@@ -41,7 +41,6 @@ public class UsuariosController {
     public ResponseEntity<List<Usuarios>> listarTodos(){
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(usuariosService.findAll());
     }
-
     @GetMapping(value = "buscarid") /* Com RequestParam */
     public ResponseEntity<Usuarios> buscarID(@RequestParam(name = "codigoid") UUID codigoID) {
         Usuarios usuarios = usuariosService.findById(codigoID);
@@ -51,11 +50,6 @@ public class UsuariosController {
     public ResponseEntity<Usuarios> buscarID2(@PathVariable UUID codigoID) {
             Usuarios usuarios = usuariosService.findById(codigoID);
             return new ResponseEntity<Usuarios>(usuarios, HttpStatus.OK);
-    }
-    @DeleteMapping(value = "delete")
-    public ResponseEntity<String> deleteUsuario(@RequestBody Usuarios usuarios) {
-        usuariosService.delete(usuarios);
-        return new ResponseEntity<String>("Usuário deletado com sucesso", HttpStatus.OK);
     }
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateParkingSpot(@PathVariable(value = "id") UUID codigoID,
@@ -68,5 +62,14 @@ public class UsuariosController {
         BeanUtils.copyProperties(usuariosDto, usuarios); /* conversão de Dto para entity*/
         usuarios.setCodigoID(usuariosOptional.get().getCodigoID()); /* Setando Id para permanecer o mesmo */
         return ResponseEntity.status(HttpStatus.OK).body(usuariosService.save(usuarios));
+    }
+    @DeleteMapping("/{codigoID}")
+    public ResponseEntity<Object> delete2(@PathVariable(value = "codigoID") UUID codigoID){
+        Optional<Usuarios> usuariosOptional = Optional.ofNullable(usuariosService.findById(codigoID));
+        if (!usuariosOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Id não encontrado.");
+        }
+        usuariosService.delete(usuariosOptional.get());
+        return ResponseEntity.status(HttpStatus.OK).body("Usuário deletado com sucesso.");
     }
 }
