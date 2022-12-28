@@ -34,6 +34,11 @@ O serviço de autenticação será responsável por prover tokens de acesso que 
 > Banco de dados MySQL
 
 
+# Erros a serem tratados:
+
+> PUT | Ao atualizar a senha não fica criptografada
+
+
 
 
 
