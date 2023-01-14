@@ -2,6 +2,7 @@ package com.shadow.desafio.service;
 
 import com.shadow.desafio.entities.Usuarios;
 import com.shadow.desafio.repositories.UsuariosRepository;
+import com.shadow.desafio.repositories.feign.AuthFeign;
 import com.shadow.desafio.service.exceptions.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.Data;
@@ -18,6 +19,8 @@ import java.util.UUID;
 public class UsuariosService {
     @Autowired
     private UsuariosRepository usuariosRepository;
+    @Autowired
+    AuthFeign authFeign;
     public Usuarios findById(UUID codigoID) {
         return usuariosRepository.findById(codigoID).orElseThrow(
                 () -> new EntityNotFoundException("ID not found " + codigoID));
@@ -36,4 +39,12 @@ public class UsuariosService {
         return usuariosRepository.findAll();
     }
 
+
+
+    public boolean ValidarToken(String token) {
+        return authFeign.validarToken(token);
+    }
+    public String getTipoUsuario(String token) {
+        return authFeign.getTipoUsuario(token);
+    }
 }

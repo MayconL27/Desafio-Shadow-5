@@ -18,6 +18,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
+@RequestMapping("usuario")
 @CrossOrigin(origins = "*", maxAge = 3600)/* Permitir acesso a qualquer fonte*/
 @Data
 public class UsuariosController {
@@ -39,7 +40,7 @@ public class UsuariosController {
     }
     @GetMapping(value = "listartodos")
     public ResponseEntity<List<Usuarios>> listarTodos(){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(usuariosService.findAll());
+        return ResponseEntity.status(HttpStatus.OK).body(usuariosService.findAll());
     }
     @GetMapping(value = "buscarid") /* Com RequestParam */
     public ResponseEntity<Usuarios> buscarID(@RequestParam(name = "codigoid") UUID codigoID) {
