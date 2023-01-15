@@ -13,4 +13,11 @@ public interface AuthFeign {
     @GetMapping(value = "/auth/tipousuario")
     String getTipoUsuario(@RequestHeader(HttpHeaders.AUTHORIZATION)String token);
 
+/*
+    @GetMapping(value = "/auth/validatetoken")
+    boolean validateToken(@RequestHeader(HttpHeaders.AUTHORIZATION)String token);
+
+    @GetMapping(value = "/auth/typeuser")
+    String getTypeUser(@RequestHeader(HttpHeaders.AUTHORIZATION)String token);
+*/
 }
