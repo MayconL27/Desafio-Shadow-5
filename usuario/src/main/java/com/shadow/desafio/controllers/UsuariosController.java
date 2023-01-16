@@ -3,6 +3,7 @@ package com.shadow.desafio.controllers;
 import com.shadow.desafio.dtos.UsuariosDto;
 import com.shadow.desafio.entities.Usuarios;
 import com.shadow.desafio.service.UsuariosService;
+import com.shadow.desafio.util.ValidarCPF;
 import jakarta.validation.Valid;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
@@ -22,7 +23,10 @@ public class UsuariosController {
     final UsuariosService usuariosService;
 
     @PostMapping(value = "/salvar")
-    public ResponseEntity<Object> salvarUsuarios(@RequestBody Usuarios usuarios) {
+    public ResponseEntity<?> salvarUsuarios(@RequestBody Usuarios usuarios) {
+        if (!ValidarCPF.isCPF(usuarios.getCpf())) {
+            return new ResponseEntity<String>("cpf " + usuarios.getCpf() + " inválido", HttpStatus.NOT_FOUND);
+        }
         return ResponseEntity.status(HttpStatus.CREATED).body(usuariosService.save(usuarios));
     }
     @GetMapping(value = "/listartodos")

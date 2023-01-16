@@ -36,7 +36,6 @@ public class UsuariosService {
         return usuariosRepository.findAll();
     }
 
-
     public Usuarios findById(UUID codigoID) {
         return usuariosRepository.findById(codigoID).orElseThrow(
                 () -> new EntityNotFoundException("ID not found " + codigoID));
@@ -54,8 +53,4 @@ public class UsuariosService {
     }
 
 
-    public boolean cpfValido(String cpf) {
-        boolean cpfValido = ValidarCPF.isCPF(cpf);
-        return cpfValido;
-    }
 }
