@@ -1,4 +1,4 @@
-package com.shadow.desafio.resources.exceptions;
+package com.shadow.desafio.service.exceptions;
 
 import lombok.Data;
 

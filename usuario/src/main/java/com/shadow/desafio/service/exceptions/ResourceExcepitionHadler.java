@@ -1,6 +1,5 @@
-package com.shadow.desafio.resources.exceptions;
+package com.shadow.desafio.service.exceptions;
 
-import com.shadow.desafio.service.exceptions.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

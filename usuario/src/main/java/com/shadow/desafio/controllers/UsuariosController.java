@@ -2,21 +2,14 @@ package com.shadow.desafio.controllers;
 
 import com.shadow.desafio.dtos.UsuariosDto;
 import com.shadow.desafio.entities.Usuarios;
-import com.shadow.desafio.exceptions.UsuariosExceptions;
 import com.shadow.desafio.service.UsuariosService;
-import com.shadow.desafio.util.ValidarCPF;
 import jakarta.validation.Valid;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
