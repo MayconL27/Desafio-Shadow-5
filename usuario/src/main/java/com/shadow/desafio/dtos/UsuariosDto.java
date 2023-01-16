@@ -1,21 +1,17 @@
 package com.shadow.desafio.dtos;
 
-import jakarta.persistence.Column;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UsuariosDto {
-    @NotBlank
+
     private String nome;
-    @NotBlank
-    @Size(max = 11)
     private String cpf;
-    @NotBlank
     private String email;
-    @NotBlank
     private String senha;
-    @NotBlank
     private String tipoUsuario;
 }

@@ -2,17 +2,20 @@ package com.shadow.desafio.controllers;
 
 import com.shadow.desafio.dtos.UsuariosDto;
 import com.shadow.desafio.entities.Usuarios;
+import com.shadow.desafio.exceptions.UsuariosExceptions;
 import com.shadow.desafio.service.UsuariosService;
 import com.shadow.desafio.util.ValidarCPF;
 import jakarta.validation.Valid;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,26 +26,17 @@ import java.util.UUID;
 @Data
 public class UsuariosController {
 
-    @Autowired
-    private UsuariosService usuariosService;
-    private final PasswordEncoder encoder;
+    final UsuariosService usuariosService;
 
-    @PostMapping(value = "salvar")
-    public ResponseEntity<?> salvarUsuarios(@RequestBody Usuarios usuarios){
-        if (!ValidarCPF.isCPF(usuarios.getCpf())) { /* Se retornar CPf falso: */
-            //throw new Exception("Cpf: " + usuarios.getCpf() + " está inválido.");
-            return new ResponseEntity<String>("Cpf " + usuarios.getCpf() +" inválido", HttpStatus.OK);
-        }
-
-        usuarios.setSenha(encoder.encode(usuarios.getSenha())); /* BCrypt Senha encripitada */
-        Usuarios user = usuariosService.save(usuarios);
-        return new ResponseEntity<>(user,HttpStatus.CREATED);
+    @PostMapping(value = "/salvar")
+    public ResponseEntity<Object> salvarUsuarios(@RequestBody Usuarios usuarios) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(usuariosService.save(usuarios));
     }
-    @GetMapping(value = "listartodos")
-    public ResponseEntity<List<Usuarios>> listarTodos(){
+    @GetMapping(value = "/listartodos")
+    public ResponseEntity<Object> listarTodos(){
         return ResponseEntity.status(HttpStatus.OK).body(usuariosService.findAll());
     }
-    @GetMapping(value = "buscarid") /* Com RequestParam */
+    @GetMapping(value = "/buscarid") /* Com RequestParam */
     public ResponseEntity<Usuarios> buscarID(@RequestParam(name = "codigoid") UUID codigoID) {
         Usuarios usuarios = usuariosService.findById(codigoID);
         return new ResponseEntity<Usuarios>(usuarios, HttpStatus.OK);
@@ -53,7 +47,7 @@ public class UsuariosController {
             return new ResponseEntity<Usuarios>(usuarios, HttpStatus.OK);
     }
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateParkingSpot(@PathVariable(value = "id") UUID codigoID,
+    public ResponseEntity<Object> atualizar(@PathVariable(value = "id") UUID codigoID,
                                                     @RequestBody @Valid UsuariosDto usuariosDto){
         Optional<Usuarios> usuariosOptional = Optional.ofNullable(usuariosService.findById(codigoID));
         if (!usuariosOptional.isPresent()) {
