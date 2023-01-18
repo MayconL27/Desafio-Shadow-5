@@ -19,14 +19,12 @@ public class Usuarios {
     @Column(nullable = false, unique = true, length = 11)
     @NotBlank
     private String cpf;
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false, unique = true, length = 30)
     @NotBlank
     private String email;
     @Column(nullable = false)
     @NotBlank
     private String senha;
-    @Column(nullable = false, length = 30)
-    @NotBlank
-    private String tipoUsuario;
+    private TipoUsuario tipoUsuario; // CLIENTE, FORNECEDOR, ADMIN;
 
 }
