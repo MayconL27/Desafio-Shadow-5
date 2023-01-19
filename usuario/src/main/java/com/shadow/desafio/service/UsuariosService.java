@@ -1,7 +1,10 @@
 package com.shadow.desafio.service;
 
+import com.shadow.desafio.dtos.LoginDto;
+import com.shadow.desafio.dtos.UsuariosDto;
 import com.shadow.desafio.entities.Usuarios;
 import com.shadow.desafio.repositories.UsuariosRepository;
+import com.shadow.desafio.repositories.feign.AuthFeign;
 import com.shadow.desafio.service.exceptions.EntityNotFoundException;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +20,8 @@ public class UsuariosService {
 
     final UsuariosRepository usuariosRepository;
     final PasswordEncoder passwordEncoder;
+    @Autowired
+    AuthFeign authFeign;
 
     public Usuarios save(Usuarios usuarios) {
         var encodedPass = this.passwordEncoder.encode(usuarios.getSenha());
@@ -38,4 +43,32 @@ public class UsuariosService {
     }
 
 
+    public Object loginUsuario(LoginDto loginDto) {
+
+        Usuarios usuarios = usuariosRepository.findByEmail(loginDto.getEmail());
+        if (usuarios == null) {
+            return null;
+        }
+
+        boolean isValidPassword = passwordEncoder.matches(loginDto.getSenha(), usuarios.getSenha());
+        if (!isValidPassword) {
+            return null;
+        }
+
+        UsuariosDto usuariosDto = new UsuariosDto();
+        usuariosDto.setEmail(usuarios.getEmail());
+        usuariosDto.setTipoUsuario(usuarios.getTipoUsuario());
+        usuariosDto.setNome(usuarios.getNome());
+        usuariosDto.setCpf(usuarios.getCpf());
+
+        return usuariosDto;
+    }
+
+    public boolean validarToken(String token) {
+        return authFeign.validarToken(token);
+    }
+
+    public String getTipoUsuario(String token) {
+        return authFeign.getTipoUsuario(token);
+    }
 }
