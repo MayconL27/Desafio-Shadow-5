@@ -25,26 +25,19 @@ public class UsuariosController {
     final UsuariosService usuariosService;
 
     @PostMapping(value = "/salvar")
-    public ResponseEntity<?> salvarUsuarios(@RequestBody Usuarios usuarios,
-                                            @RequestHeader(HttpHeaders.AUTHORIZATION)String token) {
-        if (!ValidarCPF.isCPF(usuarios.getCpf())) {
-            return new ResponseEntity<String>("cpf " + usuarios.getCpf() + " inválido", HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<Object> salvarUsuarios(@RequestBody Usuarios usuarios,
+                                                 @RequestHeader(HttpHeaders.AUTHORIZATION)String token) {
         return ResponseEntity.status(HttpStatus.CREATED).body(usuariosService.save(usuarios));
     }
     @GetMapping(value = "/listartodos")
     public ResponseEntity<Object> listarTodos(@RequestHeader(HttpHeaders.AUTHORIZATION)String token){
         return ResponseEntity.status(HttpStatus.OK).body(usuariosService.findAll());
     }
-    @GetMapping(value = "/buscarid") /* Com RequestParam */
-    public ResponseEntity<Usuarios> buscarID(@RequestParam(name = "codigoid") UUID codigoID) {
-        Usuarios usuarios = usuariosService.findById(codigoID);
-        return new ResponseEntity<Usuarios>(usuarios, HttpStatus.OK);
-    }
-    @GetMapping(value = "/{codigoID}") /* Passando a Variavel */
-    public ResponseEntity<Usuarios> buscarID2(@PathVariable UUID codigoID) {
-            Usuarios usuarios = usuariosService.findById(codigoID);
-            return new ResponseEntity<Usuarios>(usuarios, HttpStatus.OK);
+
+    @GetMapping(value = "/{codigoID}") // Buscar por Id
+    public ResponseEntity<Object> buscarID(@PathVariable UUID codigoID,
+                                            @RequestHeader(HttpHeaders.AUTHORIZATION)String token) {
+         return new ResponseEntity<>(usuariosService.findById(codigoID), HttpStatus.OK);
     }
     @PutMapping("/{id}")
     public ResponseEntity<Object> atualizar(@PathVariable(value = "id") UUID codigoID,
