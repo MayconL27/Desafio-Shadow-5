@@ -5,9 +5,12 @@ import com.shadow.desafio.dtos.UsuariosDto;
 import com.shadow.desafio.entities.Usuarios;
 import com.shadow.desafio.repositories.UsuariosRepository;
 import com.shadow.desafio.repositories.feign.AuthFeign;
-import com.shadow.desafio.service.exceptions.EntityNotFoundException;
+import com.shadow.desafio.util.ValidarCPF;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -71,4 +74,6 @@ public class UsuariosService {
     public String getTipoUsuario(String token) {
         return authFeign.getTipoUsuario(token);
     }
+
+
 }
