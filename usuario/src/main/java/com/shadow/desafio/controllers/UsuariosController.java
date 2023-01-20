@@ -4,6 +4,7 @@ import com.shadow.desafio.dtos.LoginDto;
 import com.shadow.desafio.dtos.UsuariosDto;
 import com.shadow.desafio.entities.Usuarios;
 import com.shadow.desafio.service.UsuariosService;
+import com.shadow.desafio.service.exceptions.MessageExceptionHandler;
 import com.shadow.desafio.util.ValidarCPF;
 import jakarta.validation.Valid;
 import lombok.Data;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -41,7 +43,8 @@ public class UsuariosController {
     }
     @PutMapping("/{id}")
     public ResponseEntity<Object> atualizar(@PathVariable(value = "id") UUID codigoID,
-                                                    @RequestBody @Valid UsuariosDto usuariosDto){
+                                            @RequestBody @Valid UsuariosDto usuariosDto,
+                                            @RequestHeader(HttpHeaders.AUTHORIZATION)String token){
         Optional<Usuarios> usuariosOptional = Optional.ofNullable(usuariosService.findById(codigoID));
         if (!usuariosOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado.");
@@ -52,13 +55,11 @@ public class UsuariosController {
         return ResponseEntity.status(HttpStatus.OK).body(usuariosService.save(usuarios));
     }
     @DeleteMapping("/{codigoID}")
-    public ResponseEntity<Object> delete2(@PathVariable(value = "codigoID") UUID codigoID){
-        Optional<Usuarios> usuariosOptional = Optional.ofNullable(usuariosService.findById(codigoID));
-        if (!usuariosOptional.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Id não encontrado.");
-        }
-        usuariosService.delete(usuariosOptional.get());
-        return ResponseEntity.status(HttpStatus.OK).body("Usuário deletado com sucesso.");
+    public ResponseEntity<Object> delete(@PathVariable(value = "codigoID") UUID codigoID,
+                                         @RequestHeader(HttpHeaders.AUTHORIZATION)String token){
+        Usuarios usuarios = usuariosService.findById(codigoID);
+        usuariosService.delete(usuarios);
+        return ResponseEntity.status(HttpStatus.OK).body(new MessageExceptionHandler(new Date(),HttpStatus.OK.value(),"Usuário deletado"));
     }
 
     @PostMapping("/login")

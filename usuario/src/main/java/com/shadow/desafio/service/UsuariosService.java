@@ -5,13 +5,15 @@ import com.shadow.desafio.dtos.UsuariosDto;
 import com.shadow.desafio.entities.Usuarios;
 import com.shadow.desafio.repositories.UsuariosRepository;
 import com.shadow.desafio.repositories.feign.AuthFeign;
-import com.shadow.desafio.service.exceptions.EntityNotFoundException;
+
+import com.shadow.desafio.service.exceptions.UserNotFoundException;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -34,11 +36,12 @@ public class UsuariosService {
     }
 
     public Usuarios findById(UUID codigoID) {
-        return usuariosRepository.findById(codigoID).orElseThrow(
-                () -> new EntityNotFoundException("ID not found " + codigoID));
+        Optional<Usuarios> usuarios = usuariosRepository.findById(codigoID);
+        return usuarios.orElseThrow(() -> new UserNotFoundException());
     }
 
     public void delete(Usuarios usuarios) {
+        findById(usuarios.getCodigoID());
         usuariosRepository.delete(usuarios);
     }
 
