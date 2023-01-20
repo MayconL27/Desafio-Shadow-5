@@ -20,26 +20,35 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/usuario")
-@CrossOrigin(origins = "*", maxAge = 3600)/* Permitir acesso a qualquer fonte*/
+@CrossOrigin(origins = "*", maxAge = 3600)/* Permitir acesso a qualquer fonte */
 @Data
 public class UsuariosController {
 
     final UsuariosService usuariosService;
 
-    @PostMapping(value = "/salvar")
+    @PostMapping(value = "/salvar") // Salvar usuário.
     public ResponseEntity<Object> salvarUsuarios(@RequestBody Usuarios usuarios,
                                                  @RequestHeader(HttpHeaders.AUTHORIZATION)String token) {
+        if (!usuariosService.validarToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageExceptionHandler(new Date(), HttpStatus.UNAUTHORIZED.value(), "Token Inválido" ));
+        }
         return ResponseEntity.status(HttpStatus.CREATED).body(usuariosService.save(usuarios));
     }
-    @GetMapping(value = "/listartodos")
+    @GetMapping(value = "/listartodos") // Listar todos os usuários.
     public ResponseEntity<Object> listarTodos(@RequestHeader(HttpHeaders.AUTHORIZATION)String token){
         return ResponseEntity.status(HttpStatus.OK).body(usuariosService.findAll());
     }
-
-    @GetMapping(value = "/{codigoID}") // Buscar por Id
+    @GetMapping(value = "/{codigoID}") // Buscar por Id.
     public ResponseEntity<Object> buscarID(@PathVariable UUID codigoID,
                                             @RequestHeader(HttpHeaders.AUTHORIZATION)String token) {
          return new ResponseEntity<>(usuariosService.findById(codigoID), HttpStatus.OK);
+    }
+    @DeleteMapping("/{codigoID}") // Delete por ID.
+    public ResponseEntity<Object> delete(@PathVariable(value = "codigoID") UUID codigoID,
+                                         @RequestHeader(HttpHeaders.AUTHORIZATION)String token){
+        Usuarios usuarios = usuariosService.findById(codigoID);
+        usuariosService.delete(usuarios);
+        return ResponseEntity.status(HttpStatus.OK).body(new MessageExceptionHandler(new Date(),HttpStatus.OK.value(),"Usuário deletado"));
     }
     @PutMapping("/{id}")
     public ResponseEntity<Object> atualizar(@PathVariable(value = "id") UUID codigoID,
@@ -54,13 +63,7 @@ public class UsuariosController {
         usuarios.setCodigoID(usuariosOptional.get().getCodigoID()); /* Setando Id para permanecer o mesmo */
         return ResponseEntity.status(HttpStatus.OK).body(usuariosService.save(usuarios));
     }
-    @DeleteMapping("/{codigoID}")
-    public ResponseEntity<Object> delete(@PathVariable(value = "codigoID") UUID codigoID,
-                                         @RequestHeader(HttpHeaders.AUTHORIZATION)String token){
-        Usuarios usuarios = usuariosService.findById(codigoID);
-        usuariosService.delete(usuarios);
-        return ResponseEntity.status(HttpStatus.OK).body(new MessageExceptionHandler(new Date(),HttpStatus.OK.value(),"Usuário deletado"));
-    }
+
 
     @PostMapping("/login")
     public ResponseEntity<Object> loginUser(@RequestBody LoginDto loginDto) {
