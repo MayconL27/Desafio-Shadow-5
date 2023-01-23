@@ -85,7 +85,7 @@ public class UsuariosService {
     }
 
 
-    public Object getTypeUser(String token) {
-        return authFeign.getTipoUsuario(token);
+    public String getTypeUser(String token) {
+        return authFeign.getTypeUser(token);
     }
 }

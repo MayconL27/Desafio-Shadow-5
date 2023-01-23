@@ -11,7 +11,8 @@ public interface AuthFeign {
     boolean validarToken(@RequestHeader(HttpHeaders.AUTHORIZATION)String token);
 
     @GetMapping(value = "/auth/tipousuario")
-    String getTipoUsuario(@RequestHeader(HttpHeaders.AUTHORIZATION)String token);
+    String getTypeUser(@RequestHeader(HttpHeaders.AUTHORIZATION)String token);
+
 
 
 }

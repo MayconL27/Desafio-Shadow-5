@@ -32,9 +32,9 @@ public class UsuariosController {
         if (!usuariosService.validarToken(token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageExceptionHandler(new Date(), HttpStatus.UNAUTHORIZED.value(), "Token Inválido" ));
         }
-        if (!usuariosService.getTypeUser(token).equals("ADMIN")){
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new MessageExceptionHandler(new Date(), HttpStatus.FORBIDDEN.value(), "Usuário sem permisão" ));
-        }
+//        if (!usuariosService.getTypeUser(token).equals("ADMIN")){
+//            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new MessageExceptionHandler(new Date(), HttpStatus.FORBIDDEN.value(), "Usuário sem permisão" ));
+//        }
 
         if (usuariosService.existsByEmail(usuarios.getEmail())){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageExceptionHandler(new Date(), HttpStatus.NOT_FOUND.value(),"E-mail já cadastrado" ));
@@ -55,9 +55,10 @@ public class UsuariosController {
         if (!usuariosService.validarToken(token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageExceptionHandler(new Date(), HttpStatus.UNAUTHORIZED.value(), "Token Inválido" ));
         }
-        if (!usuariosService.getTypeUser(token).equals("ADMIN")){
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new MessageExceptionHandler(new Date(), HttpStatus.FORBIDDEN.value(), "Usuário sem permisão" ));
-        }
+//        if (!usuariosService.getTypeUser(token).equals("ADMIN")){
+//            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new MessageExceptionHandler(new Date(), HttpStatus.FORBIDDEN.value(), "Usuário sem permisão" ));
+//        }
+
 
         return ResponseEntity.status(HttpStatus.OK).body(usuariosService.findAll());
     }
