@@ -5,15 +5,13 @@ import com.shadow.desafio.dtos.UsuariosDto;
 import com.shadow.desafio.entities.Usuarios;
 import com.shadow.desafio.service.UsuariosService;
 import com.shadow.desafio.service.exceptions.MessageExceptionHandler;
-import com.shadow.desafio.util.ValidarCPF;
-import jakarta.validation.Valid;
-import lombok.Data;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
@@ -21,10 +19,12 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/usuario")
 @CrossOrigin(origins = "*", maxAge = 3600)/* Permitir acesso a qualquer fonte */
-@Data
 public class UsuariosController {
 
     final UsuariosService usuariosService;
+    public UsuariosController(UsuariosService usuariosService) {
+        this.usuariosService = usuariosService;
+    }
 
     @PostMapping(value = "/salvar") // Salvar usuário.
     public ResponseEntity<Object> salvarUsuarios(@RequestBody Usuarios usuarios,
@@ -32,10 +32,33 @@ public class UsuariosController {
         if (!usuariosService.validarToken(token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageExceptionHandler(new Date(), HttpStatus.UNAUTHORIZED.value(), "Token Inválido" ));
         }
+        if (!usuariosService.getTypeUser(token).equals("ADMIN")){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new MessageExceptionHandler(new Date(), HttpStatus.FORBIDDEN.value(), "Usuário sem permisão" ));
+        }
+
+        if (usuariosService.existsByEmail(usuarios.getEmail())){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageExceptionHandler(new Date(), HttpStatus.NOT_FOUND.value(),"E-mail já cadastrado" ));
+        }
+
+        if (usuariosService.existsBycpf(usuarios.getCpf())){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageExceptionHandler(new Date(), HttpStatus.NOT_FOUND.value(),"CPF já cadastrado" ));
+        }
+
+        if (!usuariosService.cpfValidator(usuarios.getCpf())) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageExceptionHandler(new Date(), HttpStatus.NOT_FOUND.value(),"CPF invalido" ));
+        }
         return ResponseEntity.status(HttpStatus.CREATED).body(usuariosService.save(usuarios));
     }
     @GetMapping(value = "/listartodos") // Listar todos os usuários.
     public ResponseEntity<Object> listarTodos(@RequestHeader(HttpHeaders.AUTHORIZATION)String token){
+
+        if (!usuariosService.validarToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageExceptionHandler(new Date(), HttpStatus.UNAUTHORIZED.value(), "Token Inválido" ));
+        }
+        if (!usuariosService.getTypeUser(token).equals("ADMIN")){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new MessageExceptionHandler(new Date(), HttpStatus.FORBIDDEN.value(), "Usuário sem permisão" ));
+        }
+
         return ResponseEntity.status(HttpStatus.OK).body(usuariosService.findAll());
     }
     @GetMapping(value = "/{codigoID}") // Buscar por Id.
@@ -68,6 +91,10 @@ public class UsuariosController {
     @PostMapping("/login")
     public ResponseEntity<Object> loginUser(@RequestBody LoginDto loginDto) {
         Object response = usuariosService.loginUsuario(loginDto);
+        if (response == null) {
+            MessageExceptionHandler error = new MessageExceptionHandler(new Date(), HttpStatus.NOT_FOUND.value(), "E-mail ou senha inválido.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        }
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

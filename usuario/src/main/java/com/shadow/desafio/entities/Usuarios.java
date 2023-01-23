@@ -1,8 +1,10 @@
 package com.shadow.desafio.entities;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+
 import lombok.Data;
+
 import java.util.UUID;
 
 @Entity
