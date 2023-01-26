@@ -84,7 +84,6 @@ public class UsuariosService {
         return authFeign.validarToken(token);
     }
 
-
     public String getTypeUser(String token) {
         return authFeign.getTypeUser(token);
     }

@@ -1,10 +1,9 @@
 package com.shadow.desafio.entities;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-
 import lombok.Data;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.UUID;
 
 @Entity

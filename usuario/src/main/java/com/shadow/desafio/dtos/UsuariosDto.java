@@ -12,7 +12,7 @@ public class UsuariosDto {
 
     private String nome;
     private String cpf;
-    private String email;
-    private String senha;
     private TipoUsuario tipoUsuario;
+    private String email;
+
 }
