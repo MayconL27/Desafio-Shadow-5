@@ -6,10 +6,12 @@ import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 @Repository
-public interface UsuariosRepository extends JpaRepository<Usuarios, UUID> {
+public interface UsuariosRepository extends JpaRepository<Usuarios, String> {
 
     Usuarios findByEmail(String email);
 
     boolean existsByEmail(String email);
     boolean existsByCpf(String cpf);
+
+
 }

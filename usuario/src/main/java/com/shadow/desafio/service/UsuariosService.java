@@ -35,7 +35,7 @@ public class UsuariosService {
         return usuariosRepository.findAll();
     }
 
-    public Usuarios findById(UUID codigoID) {
+    public Usuarios findById(String codigoID) {
         Optional<Usuarios> usuarios = usuariosRepository.findById(codigoID);
         return usuarios.orElseThrow(() -> new UserNotFoundException());
     }
@@ -87,4 +87,6 @@ public class UsuariosService {
     public String getTypeUser(String token) {
         return authFeign.getTypeUser(token);
     }
+
+
 }

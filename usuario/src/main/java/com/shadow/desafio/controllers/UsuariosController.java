@@ -36,7 +36,6 @@ public class UsuariosController {
         if (usuariosService.existsByEmail(usuarios.getEmail())){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageExceptionHandler(new Date(), HttpStatus.NOT_FOUND.value(),"E-mail já cadastrado" ));
         }
-
         if (usuariosService.existsBycpf(usuarios.getCpf())){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageExceptionHandler(new Date(), HttpStatus.NOT_FOUND.value(),"CPF já cadastrado" ));
         }
@@ -59,7 +58,7 @@ public class UsuariosController {
         return ResponseEntity.status(HttpStatus.OK).body(usuariosService.findAll());
     }
     @GetMapping(value = "/{codigoID}") // Buscar por Id.
-    public ResponseEntity<Object> buscarID(@PathVariable UUID codigoID,
+    public ResponseEntity<Object> buscarID(@PathVariable String codigoID,
                                             @RequestHeader(HttpHeaders.AUTHORIZATION)String token) {
         if (!usuariosService.validarToken(token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageExceptionHandler(new Date(), HttpStatus.UNAUTHORIZED.value(), "Token Inválido" ));
@@ -70,7 +69,7 @@ public class UsuariosController {
          return new ResponseEntity<>(usuariosService.findById(codigoID), HttpStatus.OK);
     }
     @DeleteMapping("/{codigoID}") // Delete por ID.
-    public ResponseEntity<Object> delete(@PathVariable(value = "codigoID") UUID codigoID,
+    public ResponseEntity<Object> delete(@PathVariable(value = "codigoID") String codigoID,
                                          @RequestHeader(HttpHeaders.AUTHORIZATION)String token){
         if (!usuariosService.validarToken(token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageExceptionHandler(new Date(), HttpStatus.UNAUTHORIZED.value(), "Token Inválido" ));
@@ -84,7 +83,7 @@ public class UsuariosController {
         return ResponseEntity.status(HttpStatus.OK).body(new MessageExceptionHandler(new Date(),HttpStatus.OK.value(),"Usuário deletado"));
     }
     @PutMapping("/{id}")
-    public ResponseEntity<Object> atualizar(@PathVariable(value = "id") UUID codigoID,
+    public ResponseEntity<Object> atualizar(@PathVariable(value = "id") String codigoID,
                                             @RequestBody @Valid Usuarios usuarios,
                                             @RequestHeader(HttpHeaders.AUTHORIZATION)String token){
 
